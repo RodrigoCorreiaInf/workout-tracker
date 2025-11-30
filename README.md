@@ -1,3 +1,4 @@
-# workout-tracker
-App to let users track their workouts and progress.
+# Workout Tracker Backend Service
+Backend logic to let users track their workouts and progress.
+
 
