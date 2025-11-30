@@ -1,19 +1,27 @@
 services:
-  db:
-    image: postgres:latest
+  dbmongo:
+    image: mongo
     restart: always
-    container_name: workout-tracker-db
-    shm_size: 128mb
-    environment:
-      POSTGRES_USER: admin
-      POSTGRES_PASSWORD: admin
-      POSTGRES_DB: database-workout-tracker
     ports:
-      - "5432:5432"
+      - "27017:27017"
+    environment:
+      MONGO_INITDB_DATABASE: workoutdb
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: example
     volumes:
-      - workout-data:/var/lib/postgresql
-      - ./db/create-initial-schema.sql:/docker-entrypoint-initdb.d/initial-schema-setup.sql
+      - mongo-data:/data/db
+
+  workout-app:
+    build: .
+    container_name: workout-app
+    restart: always
+    ports:
+      - "8080:8080"
+    depends_on:
+      - dbmongo
+    environment:
+      SPRING_DATA_MONGODB_URI: mongodb://root:example@dbmongo:27017/workoutdb?authSource=admin
+      SPRING_DATA_MONGODB_DATABASE: workoutdb
 
 volumes:
-  workout-data:
-
+  mongo-data:
